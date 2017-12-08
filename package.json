@@ -1,0 +1,14 @@
+{
+  "name": "bizbot",
+  "version": "0.0.1",
+  "description": "Bizbot syncano rewrite",
+  "main": "index.js",
+  "repository": "https://gitlab.com/Aexol/bizbot.git",
+  "author": "Aexol",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "syncano-cli": "0.53.0"
+  }
+}

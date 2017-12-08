@@ -1,0 +1,153 @@
+name: cert-helpers
+description: Description of cert-helpers
+version: 0.0.1
+classes:
+  ca_certs:
+    - name: cert
+      type: text
+    - name: description
+      type: string
+    - name: expire
+      type: datetime
+  certificates:
+    - name: commonName
+      type: string
+      filter_index: true
+    - name: organizationUnit
+      type: string
+      filter_index: true
+    - name: organization
+      type: string
+      filter_index: true
+    - name: locality
+      type: string
+      filter_index: true
+    - name: state
+      type: string
+      filter_index: true
+    - name: country
+      type: string
+      filter_index: true
+    - name: cert
+      type: text
+    - name: thumbprint
+      type: string
+endpoints:
+  ca:
+    file: ca.js
+    description: Return CA bundle or add new CA to bundle.
+    post:
+      - access:
+          arg: private
+    parameters:
+      ca_cert:
+        type: string
+        description: X509 cert string.
+        constraints:
+          - post:
+              - required
+      description:
+        type: string
+        description: short description of ca
+    response:
+      mimetype: application/octet-stream
+      examples:
+        - exit_code: 200
+          example: |
+            ---- gzipped ca bundle ------
+        - exit_code: 401
+          example: |
+            {"message": "unauthorized"} # admin privilages required to add ca
+  validate:
+    file: validate.js
+    description: validate certificate against CAs in db
+    allowed_methods:
+      - POST
+    parameters:
+      cert:
+        type: string
+        description: string with certificate to validate
+        required: true
+    response:
+      mimetype: application/json
+      examples:
+        - exit_code: 200
+          example: |
+            {
+              "status": "success" # or failure, success if certificate is valid.
+            }
+
+  add-certificate:
+    file: add_certificate.js
+    description: validate certificate agains ca store, and if successful add certificate to the store
+    allowed_methods:
+      - POST
+    public: false
+    parameters:
+      commonName:
+        type: string
+        description: common name.
+      organizationUnit:
+        type: string
+        description: origanizational unit 
+      organization:
+        type: string
+        description: organization name
+      locality:
+        type: string
+        description: Locality
+      state:
+        type: string
+        description: state or province name
+      country:
+        type: string
+        description: country name
+      cert:
+        type: string
+        description: PEM certificate string.
+        required: true
+      thumbprint:
+        type: string
+        description: certificate thumbprint
+    responses:
+        - exit_code: 200
+          example: |
+            {"status": "success"}
+        - exit_code: 401
+          example: |
+            {"message": "unauthorized"} # admin privilages required to add cert
+  get-certificate:
+    file: get_certificate.js
+    description: get certificate from store
+    parameters:
+      commonName:
+        type: string
+        description: common name.
+        required: true
+      organizationUnit:
+        type: string
+        description: origanizational unit 
+      organization:
+        type: string
+        description: organization name
+      locality:
+        type: string
+        description: Locality
+      state:
+        type: string
+        description: state or province name
+      country:
+        type: string
+        description: country name
+    responses:
+      mimetype: text/plain
+      examples:
+        - exit_code: 200
+          example: |
+            -----BEGIN CERTIFICATE-----
+            MIIEEjCCAvqgAwIBAgIJAI8IK6FsDZ6BMA0GCSqGSIb3DQEBBQUAMEkxCzAJBgNV
+            .................................................
+            -----END CERTIFICATE-----
+        - exit_code: 404
+          example: |
+            not found

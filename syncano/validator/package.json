@@ -1,0 +1,22 @@
+{
+  "license": "MIT",
+  "dependencies": {
+    "common-validators": "^0.2.8",
+    "syncano-server": "beta"
+  },
+  "devDependencies": {
+    "eslint": "^4.12.1"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ]
+  }
+}

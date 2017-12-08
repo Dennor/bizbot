@@ -1,0 +1,69 @@
+name: profile
+description: Description of profile
+version: 0.0.1
+endpoints:
+  signicat-url:
+    file: signicat.js
+    description: Login by email and nation ID, register if not exists.
+    parameters:
+      email:
+        type: string
+        description: User's email
+        example: user@example.com
+      method:
+        type: string
+        description: Signicat method to use. Valid values are nbid and nbid-mobile
+        example: nbid
+      lang:
+        type: string
+        description: Signicat interface language. Valid values are 'en' and 'no'
+        example: en
+      eventCb:
+        type: string
+        description: Name of callback function to be used after login
+      eventData:
+        type: object
+        description: Event data to be used after login.
+        example: {}
+    response:
+      mimetype: application/json
+      examples:
+        - exit_code: 200
+          example: |
+            {
+              "url": "https://preprod.signicat.com/std/method/demo?id=nbid%3ADEMO%3Aen&target=https%3A%2F%2Fapi.bizbot.no%2Fv1%2Fprofile%2Flogin%2F%3Femail%3D1%25401.ru%26eventCb%3Dredirect.root%26eventData%3D%257B%257D"
+            }
+        - exit_code: 400
+          example: |
+            {
+              "detail": {
+                "validationErrors": [
+                  {"error": "email", "message": "Must be a valid email"}
+                ]
+              }
+            }
+        - exit_code: 500
+          example: |
+            {
+              "detail": "Unexpected server error (500)"
+            }
+  #login:
+  #  file: login.js
+  #  description: Login by email and national ID, register if not exist.
+  #  parameters:
+  #    SAMLResponse:
+  #      type: string
+  #      description: SAML response from Signicat
+  #    eventCb:
+  #      type: string
+  #      description: Callback function to pass next
+  #    eventData:
+  #      type: object
+  #      description: Event data
+  #  response:
+  #    mimetype: text/plain
+  #    examples:
+  #      - exit_code: 301
+  #        example: |
+  #          HEADERS
+  #          Location:<instance_base_url>/auth?token=<token>&eventCb=redirect.root&eventData={}

@@ -1,0 +1,77 @@
+name: saml-helpers
+description: Description of saml-helpers
+version: 0.0.1
+
+endpoints:
+  validate-response:
+    file: validate_response.js
+    description: check samlrequest signature against certificate
+    allowed_methods:
+      - POST
+    parameters:
+      SAMLResponse:
+        type: string
+        description: SAMLResponse string.
+        required: true
+      cert:
+        type: string
+        description: PEM certificate.
+        required: true
+    resposne:
+      mimetype: 'application/json'
+      examples:
+        - exit_code: 200
+          example: |
+            {
+              "status": "valid" # "valid" on success, "invalid" on failure
+            }
+        - exit_code: 400
+          example: |
+            {
+              "details": {
+                "validationErrors": []  # errors on invalid input
+              }
+            }
+        - exit_code: 500
+          example: |
+            {
+              "message": "internal server error"
+            }
+  get-assertion:
+    file: get_assertion.js
+    description: check samlrequest signature and return it's contents as xml
+    allowed_methods:
+      - POST
+    parameters:
+      SAMLResponse:
+        type: string
+        description: SAMLResponse string.
+        required: true
+      cert:
+        type: string
+        description: PEM certificate.
+        required: true
+    response:
+      mimetype: 'application/xml'
+      examples:
+        - exit_code: 200
+          example: <xml ....>
+        - exit_code: 400
+        - exit_code: 500
+  get-raw-assertion:
+    file: get_raw_assertion.js
+    description: check samlrequest signature and return it's contents as xml
+    allowed_methods:
+      - POST
+    parameters:
+      SAMLResponse:
+        type: string
+        description: SAMLResponse string.
+        required: true
+    response:
+      mimetype: 'application/xml'
+      examples:
+        - exit_code: 200
+          example: <xml ....>
+        - exit_code: 400
+        - exit_code: 500

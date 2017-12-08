@@ -1,0 +1,8 @@
+{
+  "license": "MIT",
+  "dependencies": {
+    "pem": "^1.12.3",
+    "syncano-server": "beta",
+    "thumbprint": "^0.0.1"
+  }
+}
