@@ -17,6 +17,9 @@ endpoints:
         type: string
         description: PEM certificate.
         required: true
+      idAttribute:
+        type: string
+        description: id of signed element in xml document (default AssertionID).
     resposne:
       mimetype: 'application/json'
       examples:
@@ -51,6 +54,9 @@ endpoints:
         type: string
         description: PEM certificate.
         required: true
+      idAttribute:
+        type: string
+        description: id of signed element in xml document (default AssertionID).
     response:
       mimetype: 'application/xml'
       examples:

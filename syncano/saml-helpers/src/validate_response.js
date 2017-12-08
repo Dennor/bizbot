@@ -1,12 +1,11 @@
 import runner from './runner';
-import {validateAndParse} from './utils';
+import {validate, getXML} from './utils';
 
 async function run(ctx, args, server) {
   const {response} = server;
-  let status = 'failure';
-  if ((await validateAndParse(ctx, args, server))[0]) {
-    status = 'success';
-  }
+  const xml = getXML(args);
+  const {cert, idAttribute} = args;
+  let status = utils.validate(xml, cert, {idAttribute}) ? 'success' : 'failure';
   return response.json({status});
 }
 

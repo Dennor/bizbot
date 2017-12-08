@@ -114,6 +114,12 @@ class Validator {
       if (!validationErrors[res.key]) {
         validationErrors[res.key] = [];
       }
+      if (res.value.meta) {
+        delete res.value.meta;
+      }
+      if (res.value.server) {
+        delete res.value.server;
+      }
       validationErrors[res.key].push(res.value);
     }
     return {

@@ -10,6 +10,9 @@ endpoints:
         type: string
         description: User's email
         example: user@example.com
+        required: true
+        constraints: 
+          - email
       method:
         type: string
         description: Signicat method to use. Valid values are nbid and nbid-mobile
@@ -47,23 +50,31 @@ endpoints:
             {
               "detail": "Unexpected server error (500)"
             }
-  #login:
-  #  file: login.js
-  #  description: Login by email and national ID, register if not exist.
-  #  parameters:
-  #    SAMLResponse:
-  #      type: string
-  #      description: SAML response from Signicat
-  #    eventCb:
-  #      type: string
-  #      description: Callback function to pass next
-  #    eventData:
-  #      type: object
-  #      description: Event data
-  #  response:
-  #    mimetype: text/plain
-  #    examples:
-  #      - exit_code: 301
-  #        example: |
-  #          HEADERS
-  #          Location:<instance_base_url>/auth?token=<token>&eventCb=redirect.root&eventData={}
+  login:
+    file: login.js
+    description: Login by email and national ID, register if not exist.
+    public: false
+    parameters:
+      email:
+        type: string
+        description: login email
+        required: true
+        constraints:
+          - email
+      assertion:
+        type: object
+        description: Assertion returned by signicat
+        required: true
+      eventCb:
+        type: string
+        description: Callback function to pass next
+      eventData:
+        type: object
+        description: Event data
+    response:
+      mimetype: text/plain
+      examples:
+        - exit_code: 301
+          example: |
+            HEADERS
+            Location:<instance_base_url>/auth?token=<token>&eventCb=redirect.root&eventData={}

@@ -2,16 +2,16 @@ import runner from './runner';
 import utils from './utils';
 
 async function run(ctx, args, server) {
-  const {response} = server;
+  const xml = utils.getXML(args);
+  const {cert, idAttribute} = args;
+  const {error} = server.logger(ctx.meta.executor);
   let status = 'failure';
-  const res = await validateAndParse(ctx, args, server);
-  if (res[0]) {
+  let assertion = {};
+  if (utils.validate(xml, cert, {idAttribute: args.idAttribute})) {
     status = 'success';
+    assertion = await utils.parse(ctx, server, xml);
   }
-  return response.json({
-    status,
-    assertion: res[1]
-  });
+  return server.response.json({status, assertion});
 }
 
 export default async ctx => {

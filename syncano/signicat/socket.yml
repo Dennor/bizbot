@@ -33,6 +33,9 @@ endpoints:
         type: string
         description: raw target url for signicat, no preprocessing except for encoding character according to RFC3986
         required: true
+      idAttribute:
+        type: string
+        description: id of signed element in xml document (default ResponseID).
   get-proxy-url:
     file: get_proxy_url.js
     description: Create signicat login url
@@ -55,6 +58,9 @@ endpoints:
         type: string
         description: target endpoint in this instance, request will be validated using signicat/validate and forwarded after parsing to target endpoint. Target endpoint should NOT be accessible to public.
         required: true
+      idAttribute:
+        type: string
+        description: id of signed element in xml document (default ResponseID).
       payload:
         type: object
         description: If provided, target endpoint will recieve this payload along with parsed assertion. Be careful, it will be encoded in GET request to signicat so keep it's size reasonable.
@@ -62,7 +68,7 @@ endpoints:
     file: validate.js
     description: validate signicat response and proxy it to another endpoint with assertion as an additional parameter.
     allowed_methods:
-      - GET
+      - POST
     parameters:
       SAMLResponse:
         type: string
@@ -72,6 +78,9 @@ endpoints:
         type: string
         description: target endpoint to which request will be proxied after validation
         required: true
+      idAttribute:
+        type: string
+        description: ID of signed element in xml document (default ResponseID)
       payload:
-        type: object
-        description: additonal payload to target endpoint
+        type: string
+        description: additonal payload to target endpoint, will be interpreted as json

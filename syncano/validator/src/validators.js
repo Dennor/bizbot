@@ -7,7 +7,7 @@ validators.allowed_methods = (value, arg, opts) => {
       message: 'missing method'
     };
   }
-  for (const meth of validator.arg) {
+  for (const meth of arg) {
     if (meth.toUpperCase() === opts.meta.request.REQUEST_METHOD.toUpperCase()) {
       return;
     }

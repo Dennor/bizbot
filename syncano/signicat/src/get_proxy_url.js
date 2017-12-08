@@ -1,19 +1,20 @@
-import utils from './utils';
 import runner from './runner';
+import utils from './utils';
 
 async function run(ctx, args, server) {
   const {method = 'nbid', profile = 'DEMO', lang = 'en', payload} = args;
   const {instanceName, spaceHost} = server.socket.instance;
-  let targetUrl = `https://${instanceName}.${spaceHost}/signicat/validate/`;
+  let targetUrl = `${instanceName}.${spaceHost}/signicat/validate/`;
   let proxyParams = {
-    target: args.target
+    target: args.target,
+    idAttribute: args.idAttribute || 'ResponseID'
   };
   if (payload) {
-    proxyParams[payload] = payload;
+    proxyParams.payload = JSON.stringify(payload);
   }
   targetUrl = utils.buildURI(targetUrl, proxyParams);
   return server.response.json({
-    url: utils.buildURI(utils.getSignicatURI(), {
+    url: utils.buildURI(utils.getSignicatURI(ctx), {
       id: method + ':' + profile + ':' + lang,
       target: targetUrl
     })
@@ -21,5 +22,5 @@ async function run(ctx, args, server) {
 }
 
 export default async ctx => {
-  return await runner(ctx, run);
+  return runner(ctx, run);
 };

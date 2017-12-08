@@ -1,12 +1,11 @@
 import runner from './runner';
-import {parse} from './utils';
+import {parse, getXML} from './utils';
 
 async function run(ctx, args, server) {
   const {response} = server;
-  let status = 'failure';
-  const res = await parse(ctx, args, server);
+  const assertion = await parse(ctx, server, getXML(args));
   return response.json({
-    assertion: res
+    assertion
   });
 }
 
