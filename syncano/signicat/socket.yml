@@ -64,6 +64,34 @@ endpoints:
       payload:
         type: object
         description: If provided, target endpoint will recieve this payload along with parsed assertion. Be careful, it will be encoded in GET request to signicat so keep it's size reasonable.
+  get-endpoint-url:
+    file: get_endpoint_url.js
+    description: Create signicat login url for endpoint
+    parameters:
+      method:
+        type: string
+        description: Signicat method to use. Valid values are nbid and nbid-mobile
+        example: nbid
+        required: true
+      profile:
+        type: string
+        description: signicat graphical profile
+        example: DEMO
+      lang:
+        type: string
+        description: Signicat interface language. Valid values are 'en' and 'no'
+        example: en
+        required: true
+      target:
+        type: string
+        description: target endpoint in this instance, request will be validated using signicat/validate and forwarded after parsing to target endpoint. Target endpoint should NOT be accessible to public.
+        required: true
+      idAttribute:
+        type: string
+        description: id of signed element in xml document (default ResponseID).
+      payload:
+        type: object
+        description: If provided, target endpoint will recieve this payload along with parsed assertion. Be careful, it will be encoded in GET request to signicat so keep it's size reasonable.
   validate:
     file: validate.js
     description: validate signicat response and proxy it to another endpoint with assertion as an additional parameter.
@@ -80,7 +108,20 @@ endpoints:
         required: true
       idAttribute:
         type: string
-        description: ID of signed element in xml document (default ResponseID)
-      payload:
-        type: string
-        description: additonal payload to target endpoint, will be interpreted as json
+        description: ID of signed element in xml document.
+        required: true
+  validate-middleware:
+    file: validate-middleware.js
+    description: validate signicat as middleware
+    allowed_methods:
+      - POST
+    parameters:
+      args:
+        type: object
+        description: args
+      meta:
+        type: object
+        description: meta
+      options:
+        type: object
+        description: options

@@ -4,7 +4,11 @@ export default {
     let argString = '';
     for (const aName in args) {
       if (args[aName]) {
-        argString = argString + `${aName}=${encodeURIComponent(args[aName])}&`;
+        let arg = args[aName];
+        if (typeof arg === 'object') {
+          arg = JSON.stringify(arg);
+        }
+        argString = argString + `${aName}=${encodeURIComponent(arg)}&`;
       }
     }
     argString = argString.replace(/&$/, '');

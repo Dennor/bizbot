@@ -28,7 +28,7 @@ function validate(xml, cert, opts) {
   return signed.checkSignature(xml);
 }
 
-async function parse(ctx, server, xml) {
+function parse(ctx, server, xml) {
   const {error} = server.logger(ctx.meta.executor);
   return new Promise(resolve => {
     saml20.parse(xml, (err, profile) => {

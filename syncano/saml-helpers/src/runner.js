@@ -1,50 +1,59 @@
 import Server from 'syncano-server';
 
-class ValidationError extends Error {
+class MiddlewareError extends Error {
   constructor(details) {
-    super('validation error');
+    super('middleware error');
     this.details = details;
   }
 }
 
-async function validate(ctx, server) {
-  return new Promise((resolve, reject) => {
-    const {response, socket} = server;
-    socket
-      .post('validator/validate', {
-        ...ctx
-      })
-      .then(resp => {
-        if (resp.status < 200 || resp.status >= 300) {
-          if (resp.status === 400) {
-            reject(resp.data);
-            return;
+function runMiddleware(ctx, server, runner, middleware, options) {
+  const {response, socket} = server;
+  if (Object.keys(middleware).length === 0) {
+    return execRunner(ctx, runner, ctx.args, server).then(resp => {
+      return resp;
+    });
+  }
+  return socket
+    .post('middleware-socket/execute', {
+      args: ctx.args,
+      meta: ctx.meta,
+      middleware,
+      options
+    })
+    .then(
+      resp => {
+        const {args, middlewareResult} = resp;
+        return execRunner(ctx, runner, args, server).then(resp => {
+          return resp;
+        });
+      },
+      e => {
+        let errHandler = e => {
+          if (e.response) {
+            return response.json(e.response.data, e.response.status);
+          } else {
+            return response.json({e}, 500);
           }
-          reject('validation error');
-          return;
-        }
-        const {args, validationErrors} = resp;
-        if (Object.keys(validationErrors).length !== 0) {
-          reject(new ValidationError({validationErrors}));
-          return;
-        }
-        resolve(args);
-      });
+        };
+        return errHandler(e);
+      }
+    );
+}
+
+function execRunner(ctx, runner, args, server) {
+  return runner(ctx, args, server).then(resp => {
+    return resp;
   });
 }
 
-export default async (ctx, runner) => {
+export default (ctx, runner, middleware, options) => {
   const server = Server(ctx);
   const {response, logger} = server;
   const {debug} = logger(ctx.meta.executor);
-  try {
-    const validatedArgs = await validate(ctx, server);
-    return await runner(ctx, validatedArgs, server);
-  } catch (e) {
-    if (e instanceof ValidationError) {
-      return response.json({details: e.details}, 400);
-    }
-    debug(e.stack);
-    return;
-  }
+  middleware = middleware || {};
+  options = options || {};
+  return runMiddleware(ctx, server, runner, middleware, options).then(resp => {
+    return resp;
+  });
 };

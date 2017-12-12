@@ -1,4 +1,5 @@
 import validators from 'common-validators';
+import JSONPath from 'jsonpath-plus';
 
 validators.allowed_methods = (value, arg, opts) => {
   if (arg.length !== 0 && (!opts || !opts.meta)) {
@@ -55,6 +56,13 @@ validators.custom = (value, arg, opts) => {
         return;
       }
     });
+};
+validators.datetime = validators.date;
+
+validators.jsonpath = (value, arg, opts) => {
+  return JSONPath({json: value, path: arg.path}).length === 0
+    ? 'jsonpath does not exist'
+    : undefined;
 };
 
 export default validators;

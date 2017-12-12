@@ -1,0 +1,85 @@
+name: middleware-socket
+description: |
+  This socket acts as middleware executor for endpoint.
+version: 0.0.1
+endpoints:
+  execute:
+    file: middleware.js
+    description: |
+
+      This endpoint executes middleware for endpoint.
+
+      For example you can add endpoint that implements rate limiting and another that implements validation of input data.
+
+      Arguments passed to middleware endpoint will be args, meta and options.
+
+      Endpoint execution parameter must be in format:
+        {
+          "series": [] # list of strings with endpoint or object with series"/"parallel" key
+        }
+      or:
+        {
+          "parallel": [] # list of strings with endpoint or object with series"/"parallel" key
+        }
+
+      Only one key will be checked, with series being first. Any key that is not parallel/series will be ignored
+
+      Endpoints can return anything and it will be appended to the middleware response, if middleware should manipulate input args it can return an object with `args` key. All `args` keys in response object will be merged recursivly. In case of parallel execution the result of merge is undefined, in case of series execution, result of merge will be from left to right, sequential.
+    parameters:
+      middleware:
+        type: object
+        description: middleware to be executed
+      args:
+        type: object
+        description: Request args
+      meta:
+        type: object
+        description: Request meta
+      options:
+        type: object
+        description: Additional options passed to middleware
+    response:
+      mimetype: application/json
+      examples:
+        - exit_code: 200
+          description: All middlewares returned 200
+          example: |
+            {
+              "some_middleware": {
+                "payload": {
+                  "key1_from_some_middleware": "value_of_key1",
+                }, 
+                "status": 200
+              },
+              "some_middleware2": {
+                "payload": {
+                  "key1_from_some_middleware2": "value_of_key2",
+                },
+                "status": 200
+              },
+              "args": {} # List of args after middleware processing
+            }
+        - exit_code: 400
+          description: Atleast one middleware did not return 200
+          example: |
+            {
+              "some_middleware": {
+                "payload": {
+                  "key1_from_some_middleware": "value_of_key1",
+                }, 
+                "status": 400
+              },
+              "some_middleware2": {
+                "payload": {
+                  "key1_from_some_middleware2": "value_of_key2",
+                },
+                "status": 200
+              }
+              "args": {} # List of args after middleware processing
+            }
+        - exit_code: 403
+          description: Socket can only be run with account key or by another socket
+          example: |
+            {
+              "message": "Forbidden"
+            }

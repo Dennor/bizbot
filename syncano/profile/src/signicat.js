@@ -1,6 +1,6 @@
 import runner from './runner';
 
-async function run(ctx, args, server) {
+function run(ctx, args, server) {
   const {
     email,
     method = 'nbid',
@@ -8,20 +8,27 @@ async function run(ctx, args, server) {
     eventCb = 'redirect.root',
     eventData = {}
   } = args;
-  let resp = await server.socket.post('signicat/get-proxy-url', {
-    method,
-    lang,
-    target: 'profile/login',
-    idAttribute: 'ResponseID',
-    payload: {
-      email,
-      eventCb,
-      eventData
-    }
-  });
-  return server.response.json(resp);
+  return server.socket
+    .post('signicat/get-endpoint-url', {
+      method,
+      lang,
+      target: 'profile/login',
+      idAttribute: 'ResponseID',
+      payload: {
+        email,
+        eventCb,
+        eventData
+      }
+    })
+    .then(resp => {
+      return server.response.json(resp);
+    });
 }
 
-export default async ctx => {
-  return await runner(ctx, run);
+let middleware = {
+  parallel: ['validator/validate']
+};
+
+export default ctx => {
+  return runner(ctx, run, middleware);
 };

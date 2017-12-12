@@ -1,0 +1,267 @@
+name: company
+description: Description of company
+version: 0.0.1
+classes:
+  companies:
+    - name: orgName
+      type: string
+    - name: name
+      type: string
+    - name: address
+      type: string
+    - name: postNumber
+      type: string
+    - name: city
+      type: string
+    - name: country
+      type: string
+    - name: signRight
+      type: string
+    - name: signRightComment
+      type: string
+    - name: procuration
+      type: string
+    - name: description
+      type: string
+    - name: bankAccount
+      type: string
+    - name: email
+      type: string
+    - name: mobile
+      type: string
+    - name: correspondenceAddress
+      type: string
+    - name: correspondencePostNumber
+      type: string
+    - name: correspondenceCity
+      type: string
+    - name: correspondenceCountry
+      type: string
+    - name: siteLink
+      type: string
+    - name: instagramLink
+      type: string
+    - name: twitterLink
+      type: string
+    - name: linkedinLink
+      type: string
+    - name: facebookLink
+      type: string
+  logos:
+    - name: company
+      type: reference
+      target: companies
+    - name: size
+      type: string
+    - name: link
+      type: string
+  states:
+    - name: company
+      type: reference
+      target: companies
+    - name: title
+      type: string
+    - name: pricePerShare
+      type: integer
+    - name: shares
+      type: integer
+    - name: status
+      type: string
+  roles:
+    - name: state
+      type: reference
+      target: states
+    - name: shares
+      type: integer
+    - name: roles
+      type: relation
+      target: role_tags
+    - name: company
+      type: reference
+      target: companies
+    - name: user
+      type: reference
+      target: user
+  role_tags:
+    - name: tag
+      type: string
+endpoitns:
+  fetch:
+    file: fetch.js
+    description: |
+      Fetch company info by id
+    parameters:
+      apiToken:
+        type: string
+        description: User token, set here or in Authorization header
+      id:
+        type: number
+        descrption: company id
+    response:
+      mimetype: application/json
+      examples:
+        - exit_code: 200
+          example: |
+            {
+                "company": {
+                    "orgNumber": "919063211",
+                    "createdAt": "2017-11-07T16:14:11.530342Z",
+                    "updatedAt": "2017-11-09T14:16:45.323502Z",
+                    "signRight": "TWO MEMBERS OF THE BOARD JOINTLY",
+                    "signRightComment": "To styremedlemmer i fellesskap.",
+                    "procuration": "NO PROCURATION STATED",
+                    "procurationComment": "",
+                    "name": "BIZBOT AS",
+                    "description": "To be reach and beauty",
+                    "bankAccount": "62534000000026518832",
+                    "email": "example@gmail.com",
+                    "mobile": "+4792743120",
+                    "address": "Widerøeveien 1",
+                    "postNumber": "1360",
+                    "city": "FORNEBU",
+                    "country": "Norway",
+                    "correspondenceAddress": "Widerøeveien 1",
+                    "correspondencePostNumber": "1360",
+                    "correspondenceCity": "FORNEBU",
+                    "correspondenceCountry": "Norway",
+                    "logo": {
+                        "original": "https://storage.net/dev/logos/rog_tura_hfp8QRl.jpg",
+                        "100x100": "https://storage.net/dev/cache/72/54/725437ab20fd119ed851fa437489030c.jpg",
+                        "320x240": "https://storage.net/dev/cache/24/d1/24d16ae3ac45e129dedd86eca5d1a198.jpg"
+                    },
+                    "siteLink": "https://example.com/",
+                    "instagram_link": "https://www.instagram.com/arnoldstaffzenegger/",
+                    "twitterLink": "https://tw.com/example/"
+                    "linkedinLink": "https://ru.linkedin.com/company/bizbot_norge",
+                    "facebookLink": "https://www.facebook.com/marketing/"
+                },
+                "states": [
+                    {
+                        "id": 8,
+                        "roles": [
+                            {
+                                "roleId": 190,
+                                "roles": [
+                                    "Shareholding company"
+                                ],
+                                "shares": 25,
+                                "company": {
+                                    "orgNumber": "919063211",
+                                    "name": "BIZBOT AS",
+                                    "email": "hello@bizbot.no",
+                                    "address": "Widerøeveien 1",
+                                    "postNumber": "1360",
+                                    "city": "FORNEBU",
+                                    "country": "Norway"
+                                }
+                            },
+                            {
+                                "roleId": 191,
+                                "userId": 26,
+                                "userFullName": "Loki Laufeyjar",
+                                "userEmail": "loki@gmail.com",
+                                "roles": [
+                                    "Shareholder",
+                                    "Employee"
+                                ],
+                                "shares": 25
+                            },
+                            {
+                                "roleId": 192,
+                                "userId": 25,
+                                "userFullName": "Torvi Ragnarsson",
+                                "userEmail": "hacker@gmail.com",
+                                "roles": [
+                                    "Boardmember",
+                                    "CEO"
+                                ],
+                                "shares": 25
+                            },
+                            {
+                                "roleId": 193,
+                                "userId": 6,
+                                "userFullName": "Example Torvaldson",
+                                "userEmail": "example@gmail.com",
+                                "roles": [
+                                    "Shareholder",
+                                    "Chairman"
+                                ],
+                                "shares": 50
+                            }
+                        ],
+                        "createdAt": "2017-11-07T16:14:11.563074Z",
+                        "updatedAt": "2017-11-09T14:16:45.346620Z",
+                        "title": "Actual state",
+                        "pricePerShare": 1000,
+                        "shares": 125,
+                        "status": "actual",
+                        "deletedAt": null
+                    }
+                ]
+            }
+  exists:
+    file: exists.js
+    description: |
+      Wrapper around brreg.no. Searches among Norwegian companies of AS form by organiztion number or name. Returns list of results, empty list [] when nothing fits. Returns additional slug and email fields for companies that are already registered in BizBot and has Actual state.
+    parameters:
+      q:
+        type: string
+        descrption: Organization number or name
+        required: true
+    response:
+      mimetype: application/json
+      examples:
+        - exit_code: 200
+          example: |
+            [
+              {
+                "orgNumber": 919063211,
+                "name": "BIZBOT AS",
+                "slug": "bizbot-as",
+                "email": "hello@bizbot.no",
+                "address": "Widerøeveien 1",
+                "postNumber": "1360",
+                "city": "FORNEBU",
+                "country": "Norway"
+              },
+              {
+                "orgNumber": 986238514,
+                "name": "BIZART Sandra Frang Mostad",
+                "address": "Hedmarksgata 10A",
+                "postNumber": "0658",
+                "city": "OSLO"
+              }
+            ]
+  create:
+    file: create.js
+    description: |
+      * Use it only for Manage company flow
+      * Retruns stored company state for user if the state exists
+      * Update company data if company exists in DB
+      * Prohubuts to proceed if the company has ACTUAL state
+      * Creats initial Role in company for the user
+    parameters:
+      apiToken:
+        type: string
+        description: User token, set here or in Authorization header
+      orgNumber:
+        type: string
+        description: Organization number
+        required: true
+      name:
+        type: string
+        description: Organization name
+        required: true
+      address:
+        type: string
+        description: Organizaiton addresss
+      postnumber:
+        type: string
+        description: Organization post number
+      city:
+        type: string
+        description: Organization city
+      country:
+        type: string
+        descrption: Organization country. "Norway" by default
+        example: Norway

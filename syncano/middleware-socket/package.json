@@ -1,9 +1,8 @@
 {
   "license": "MIT",
   "dependencies": {
-    "pem": "^1.12.3",
-    "syncano-server": "beta",
-    "thumbprint": "^0.0.1"
+    "lodash.merge": "^4.6.0",
+    "syncano-server": "beta"
   },
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.2.1",
@@ -11,6 +10,19 @@
     "babel-plugin-transform-export-extensions": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-strict-mode": "^6.24.1",
-    "babel-preset-env": "^1.6.1"
+    "babel-preset-env": "^1.6.1",
+    "eslint": "^4.13.0"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ]
   }
 }

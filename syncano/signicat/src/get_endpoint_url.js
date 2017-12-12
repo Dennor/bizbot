@@ -1,16 +1,16 @@
 import runner from './runner';
 import utils from './utils';
+import merge from 'lodash.merge';
 
 function run(ctx, args, server) {
   const {method = 'nbid', profile = 'DEMO', lang = 'en', payload} = args;
   const {instanceName, spaceHost} = server.socket.instance;
-  let targetUrl = `${instanceName}.${spaceHost}/signicat/validate/`;
+  let targetUrl = `${instanceName}.${spaceHost}/${args.target}/`;
   let proxyParams = {
-    target: args.target,
     idAttribute: args.idAttribute || 'ResponseID'
   };
   if (payload) {
-    proxyParams.payload = JSON.stringify(payload);
+    proxyParams = merge(proxyParams, payload);
   }
   targetUrl = utils.buildURI(targetUrl, proxyParams);
   return Promise.resolve(

@@ -73,15 +73,14 @@ class Validator {
     }
   }
 
-  async validateArgs(args) {
-    let validationErrors = {};
+  validateArgs(args) {
     let promises = [];
-    let validatedArgs = {};
+    let validationArgs = {};
     for (const vlist in this._validators) {
       // We use * as a indicator of global rule for whole endpoint.
       let value;
       if (vlist !== '*') {
-        validatedArgs[vlist] = args[vlist];
+        validationArgs[vlist] = args[vlist];
         value = args[vlist];
       }
       validationLoop: for (let validator of this._validators[vlist]) {
@@ -92,58 +91,58 @@ class Validator {
           validator.options
         );
         if (vErr) {
-          promises.push(
-            new Promise(resolve => {
-              let params = {
+          if (vErr instanceof Promise) {
+            promises.push(
+              vErr
+                .then(
+                  v => {
+                    return {
+                      key: vlist,
+                      value: v
+                    };
+                  },
+                  e => console.log(e)
+                )
+                .catch(e => console.log(e))
+            );
+          } else {
+            promises.push(
+              Promise.resolve({
                 key: vlist,
                 value: vErr
-              };
-              if (!(vErr instanceof Promise)) {
-                return resolve(params);
-              }
-              params.value.then(v => {
-                params.value = v;
-                resolve(params);
-              });
-            })
-          );
+              })
+            );
+          }
         }
       }
     }
-    for (const res of await Promise.all(promises)) {
-      if (!validationErrors[res.key]) {
-        validationErrors[res.key] = [];
-      }
-      if (res.value.meta) {
-        delete res.value.meta;
-      }
-      if (res.value.server) {
-        delete res.value.server;
-      }
-      validationErrors[res.key].push(res.value);
-    }
     return {
-      args: validatedArgs,
-      validationErrors
+      validationErrors: Promise.all(promises),
+      validationArgs
     };
   }
 }
 
-async function getEndpointMeta(instance, endpoint) {
+function getEndpointMeta(instance, endpoint) {
   let socket = endpoint.split('/')[0];
-  let socketData = await nodeFetch(
-    `${instance.url(instance.instance.instanceName)}endpoints/sockets/${
-      socket
-    }/`
+  return nodeFetch(
+    `${instance.url(
+      instance.instance.instanceName
+    )}endpoints/sockets/${socket}/`
   )
     .then(parseJSON)
-    .then(checkStatus);
-  for (const endpointObj of socketData.objects) {
-    if (endpointObj.name === endpoint) {
-      return endpointObj.metadata;
-    }
-  }
-  return {};
+    .then(checkStatus)
+    .then(
+      socketData => {
+        for (const endpointObj of socketData.objects) {
+          if (endpointObj.name === endpoint) {
+            return endpointObj.metadata;
+          }
+        }
+        return {};
+      },
+      e => console.log(e)
+    );
 }
 
 function parseConstraintsObject(constraints, method) {
@@ -209,24 +208,66 @@ function buildRulesFromParameters(meta, method) {
   return rules;
 }
 
-export default async ctx => {
+export default ctx => {
   const server = Server(ctx);
-  const {instance, logger, response, socket} = server;
-  const {debug} = logger('validator/validate');
+  const {logger, response, socket} = server;
   try {
+    const {debug} = logger('validator/validate');
     if (!ctx.meta.admin) {
       return response.json({message: 'Unauthorized'}, 401);
     }
-    const {args, meta, required_args = []} = ctx.args;
-    let {rules} = ctx.args;
-    if (!rules) {
-      rules = buildRulesFromParameters(
-        await getEndpointMeta(instance, meta.executor),
-        meta.request.REQUEST_METHOD
-      );
-    }
+    return prepareRules(ctx, server)
+      .then(
+        prep => {
+          const validator = new Validator(prep.rules, {
+            required_args: prep.required_args
+          });
+          return validateArgs(validator, ctx.args.args).then(r => {
+            return response.json(r.result, r.status);
+          });
+        },
+        e => {
+          return response.json({message: 'bad rules'}, 400);
+        }
+      )
+      .catch(e => {
+        debug(e.stack);
+        return response.json({message: 'bad rules'}, 400);
+      });
+  } catch (e) {
+    console.log(e.stack);
+    return Promise.resolve(
+      response.json({message: 'internal server error'}, 500)
+    );
+  }
+};
 
+function getRules(ctx, server) {
+  const {instance} = server;
+  const {args, meta, options = {}} = ctx.args;
+  const {validatorOpts = {}} = options;
+  let {rules, required_args = []} = validatorOpts;
+  delete validatorOpts['rules'];
+  delete validatorOpts['required_args'];
+  if (rules) {
+    return Promise.resolve({rules, required_args});
+  }
+  return getEndpointMeta(instance, meta.executor).then(endpointMeta => {
+    return {
+      rules: buildRulesFromParameters(
+        endpointMeta,
+        meta.request.REQUEST_METHOD
+      ),
+      required_args,
+      validatorOpts
+    };
+  });
+}
+
+function prepareRules(ctx, server) {
+  return getRules(ctx, server).then(rulesObj => {
     // Append meta and server to rules options.
+    let rules = rulesObj.rules;
     for (const r in rules) {
       if (rules[r]) {
         for (let i in rules[r]) {
@@ -239,15 +280,44 @@ export default async ctx => {
           if (!v.options) {
             v.options = {};
           }
-          v.options.meta = meta;
+          v.options.meta = ctx.args.meta;
           v.options.server = server;
+          v.options = Object.assign(v.options, rulesObj.validatorOpts);
         }
       }
     }
-    const validator = new Validator(rules, {required_args});
-    return response.json(await validator.validateArgs(args));
-  } catch (e) {
-    debug(e.stack);
-    return response.json({message: 'bad rules'}, 400);
-  }
-};
+    return rulesObj;
+  });
+}
+
+function validateArgs(validator, args) {
+  let {validationArgs, validationErrors} = validator.validateArgs(args);
+  return validationErrors.then(
+    values => {
+      let validationErrors = {};
+      for (const res of values) {
+        if (!validationErrors[res.key]) {
+          validationErrors[res.key] = [];
+        }
+        if (res.value.meta) {
+          delete res.value.meta;
+        }
+        if (res.value.server) {
+          delete res.value.server;
+        }
+        validationErrors[res.key].push(res.value);
+      }
+      let status = 200;
+      if (Object.keys(validationErrors).length !== 0) {
+        status = 400;
+      }
+      return {
+        result: {args: validationArgs, validationErrors},
+        status
+      };
+    },
+    rej => {
+      return {result: {}, status: 500};
+    }
+  );
+}

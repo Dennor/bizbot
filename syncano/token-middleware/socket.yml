@@ -1,0 +1,55 @@
+name: token-middleware
+description: Description of token-middleware
+version: 0.0.1
+classes:
+  tm_tokens:
+    - name: token
+      type: string
+      filter_index: true
+    - name: expire
+      type: datetime
+endpoints:
+  create-new-token:
+    file: create_new_token.js
+    description: Create new token to validate request with.
+    public: false
+    parameters:
+      expire:
+        type: number
+        description: expire time in seconds
+    response:
+      mimetype: application/json
+      examples:
+        - exit_code: 200
+          example: |
+            {
+              "TOKEN": "abcsdfasdkfjaskldjfkla"
+            }
+        - exit_code: 403
+          example: |
+            {
+              "message": "Forbidden"
+            }
+  check-token-middleware:
+    file: check_token.js
+    description: Check token validity, token can be passed as an argument or in header API-TOKEN. Parameter has priority so it can be used in case of header name conflicts.
+    parameters:
+      args:
+        type: object
+        description: request args
+      meta:
+        type: object
+        description: request meta
+    response:
+      mimetype: application/json
+      examples:
+        - exit_code: 200
+          example: |
+            {
+              "status": "success" # token is good
+            }
+        - exit_code: 401
+          example: |
+            {
+              "status": "failure" # unauthorized
+            }

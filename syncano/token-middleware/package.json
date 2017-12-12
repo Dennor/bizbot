@@ -1,0 +1,9 @@
+{
+  "license": "MIT",
+  "dependencies": {
+    "syncano-server": "beta"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.0"
+  }
+}
