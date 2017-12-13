@@ -7,6 +7,11 @@
   "author": "Aexol",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "list-sockets": "npx s list |grep '^\\s*socket:' | sed 's/\\s*socket: //'",
+    "bump-all-socket-versions": "for socket in $(npm run -s list-sockets); do npx s submit -b patch $socket; done",
+    "publish-all-sockets": "npm run bump-all-socket-versions && for socket in $(npm run -s list-sockets); do npx s publish $socket; done"
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "syncano-cli": "0.53.0"

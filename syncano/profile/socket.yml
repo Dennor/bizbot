@@ -1,10 +1,6 @@
 name: profile
 description: Description of profile
-version: 0.0.1
-#config:
-#  TokenTTL:
-#    type: int
-#    description: lifetime in minutes
+version: 0.0.2
 classes:
   profile_data:
     - name: nationalId
@@ -16,7 +12,7 @@ classes:
       filter_index: true
     - name: lastLoginAt
       type: datetime
-    - name: updatedAt 
+    - name: updatedAt
       type: datetime
     - name: fullName
       type: string
@@ -65,14 +61,14 @@ classes:
 endpoints:
   signicat-url:
     file: signicat.js
-    description: Login by email and nation ID, register if not exists.
+    description: 'Login by email and nation ID, register if not exists.'
     parameters:
       email:
         type: string
         description: User's email
         example: user@example.com
         required: true
-        constraints: 
+        constraints:
           - email
       method:
         type: string
@@ -113,7 +109,7 @@ endpoints:
             }
   login:
     file: login.js
-    description: Login by email and national ID, register if not exist.
+    description: 'Login by email and national ID, register if not exist.'
     parameters:
       email:
         type: string
@@ -135,8 +131,9 @@ endpoints:
       mimetype: text/plain
       examples:
         - exit_code: 301
-          example: |
+          example: >
             HEADERS
+
             Location:<instance_base_url>/auth?token=<token>&eventCb=redirect.root&eventData={}
   fetch-profile:
     file: fetch_profile.js
@@ -144,7 +141,7 @@ endpoints:
     parameters:
       apiToken:
         type: string
-        description: User token from login, can be also set with authorization header
+        description: 'User token from login, can be also set with authorization header'
     response:
       mimetype: application/json
       examples:
@@ -172,14 +169,14 @@ endpoints:
           - equalLength:
               arg: 11
           - pattern:
-              arg: ^[0-9]*$
+              arg: '^[0-9]*$'
   update-profile:
     file: update_profile.js
     description: update user profile
     parameters:
       apiToken:
         type: string
-        description: User token from login, can be also set with authorization header
+        description: 'User token from login, can be also set with authorization header'
       email:
         type: string
         description: update user email

@@ -1,14 +1,17 @@
 name: validator
 description: Description of validator
-version: 0.0.1
+version: 0.0.2
 endpoints:
   validate:
     file: validate.js
-    description: |
+    description: >
       Validate input according to certain set of rules.
+
       This is a simple wrapper around common-validators library from npm.
 
+
       Check out their documentation for more information.
+
 
       Syntax to create rules:
         {
@@ -33,7 +36,14 @@ endpoints:
         }
       This will check if argument foo is a string and is not empty.      
 
-      Most rules will behave similary to common-validators library, the only exception is 'custom' rule which instead of function will execute socket endpoint named by `arg` with value of the argument and options argument passed in request body to the socket. Sockets implementing `custom` validator are expected to always return 200. Socket should return a message on error or empty string.
+
+      Most rules will behave similary to common-validators library, the only
+      exception is 'custom' rule which instead of function will execute socket
+      endpoint named by `arg` with value of the argument and options argument
+      passed in request body to the socket. Sockets implementing `custom`
+      validator are expected to always return 200. Socket should return a
+      message on error or empty string.
+
 
       For example:
         endpoint: validators/valdiate_foo
@@ -43,18 +53,21 @@ endpoints:
             "argName": "foo"
           }
         }
-      
+
       Example responses:
+
 
       Valid:
         []
-      
+
       Invalid:
         [
           {"error": "foo", "message": "foo shall not be bar"}
         ]
 
-      Because this socket endpoint can execute ANY endpoint in your instance depending on supplied rules it is limited to be only run internally or with ACCOUNT_KEY.
+      Because this socket endpoint can execute ANY endpoint in your instance
+      depending on supplied rules it is limited to be only run internally or
+      with ACCOUNT_KEY.
     parameters:
       args:
         type: object
@@ -64,7 +77,10 @@ endpoints:
         description: Rules used to validate this request.
       meta:
         type: object
-        description: request metadata, this will be used to construct validation rules if rules argument is not supplied, rules will be constructed from socket.yml of the socket.
+        description: >-
+          request metadata, this will be used to construct validation rules if
+          rules argument is not supplied, rules will be constructed from
+          socket.yml of the socket.
         example: |
           endpoints:
             get-user:
@@ -89,8 +105,9 @@ endpoints:
         }
       required_args:
         type: object
-        description: |
-          List of arguments requried in request (convienience paramter, equals to {"rule": "required"} for argument)
+        description: >
+          List of arguments requried in request (convienience paramter, equals
+          to {"rule": "required"} for argument)
         example: []
     response:
       mimetype: application/json

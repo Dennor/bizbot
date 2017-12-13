@@ -1,6 +1,6 @@
 name: cert-helpers
 description: Description of cert-helpers
-version: 0.0.1
+version: 0.0.2
 classes:
   ca_certs:
     - name: cert
@@ -76,10 +76,11 @@ endpoints:
             {
               "status": "success" # or failure, success if certificate is valid.
             }
-
   add-certificate:
     file: add_certificate.js
-    description: validate certificate agains ca store, and if successful add certificate to the store
+    description: >-
+      validate certificate agains ca store, and if successful add certificate to
+      the store
     allowed_methods:
       - POST
     public: false
@@ -89,7 +90,7 @@ endpoints:
         description: common name.
       organizationUnit:
         type: string
-        description: origanizational unit 
+        description: origanizational unit
       organization:
         type: string
         description: organization name
@@ -110,12 +111,12 @@ endpoints:
         type: string
         description: certificate thumbprint
     responses:
-        - exit_code: 200
-          example: |
-            {"status": "success"}
-        - exit_code: 401
-          example: |
-            {"message": "unauthorized"} # admin privilages required to add cert
+      - exit_code: 200
+        example: |
+          {"status": "success"}
+      - exit_code: 401
+        example: |
+          {"message": "unauthorized"} # admin privilages required to add cert
   get-certificate:
     file: get_certificate.js
     description: get certificate from store
@@ -126,7 +127,7 @@ endpoints:
         required: true
       organizationUnit:
         type: string
-        description: origanizational unit 
+        description: origanizational unit
       organization:
         type: string
         description: organization name

@@ -9,7 +9,7 @@ function run(ctx, args, server) {
     eventData = {}
   } = args;
   return server.socket
-    .post('signicat/get-endpoint-url', {
+    .post('signicat-helpers/get-endpoint-url', {
       method,
       lang,
       target: 'profile/login',

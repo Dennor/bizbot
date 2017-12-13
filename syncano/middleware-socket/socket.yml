@@ -1,17 +1,21 @@
 name: middleware-socket
 description: |
   This socket acts as middleware executor for endpoint.
-version: 0.0.1
+version: 0.0.2
 endpoints:
   execute:
     file: middleware.js
-    description: |
+    description: >
 
       This endpoint executes middleware for endpoint.
 
-      For example you can add endpoint that implements rate limiting and another that implements validation of input data.
+
+      For example you can add endpoint that implements rate limiting and another
+      that implements validation of input data.
+
 
       Arguments passed to middleware endpoint will be args, meta and options.
+
 
       Endpoint execution parameter must be in format:
         {
@@ -22,9 +26,16 @@ endpoints:
           "parallel": [] # list of strings with endpoint or object with series"/"parallel" key
         }
 
-      Only one key will be checked, with series being first. Any key that is not parallel/series will be ignored
+      Only one key will be checked, with series being first. Any key that is not
+      parallel/series will be ignored
 
-      Endpoints can return anything and it will be appended to the middleware response, if middleware should manipulate input args it can return an object with `args` key. All `args` keys in response object will be merged recursivly. In case of parallel execution the result of merge is undefined, in case of series execution, result of merge will be from left to right, sequential.
+
+      Endpoints can return anything and it will be appended to the middleware
+      response, if middleware should manipulate input args it can return an
+      object with `args` key. All `args` keys in response object will be merged
+      recursivly. In case of parallel execution the result of merge is
+      undefined, in case of series execution, result of merge will be from left
+      to right, sequential.
     parameters:
       middleware:
         type: object

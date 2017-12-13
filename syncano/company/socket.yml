@@ -1,6 +1,6 @@
 name: company
 description: Description of company
-version: 0.0.1
+version: 0.0.2
 classes:
   companies:
     - name: orgName
@@ -93,7 +93,7 @@ endpoitns:
     parameters:
       apiToken:
         type: string
-        description: User token, set here or in Authorization header
+        description: 'User token, set here or in Authorization header'
       id:
         type: number
         descrption: company id
@@ -201,8 +201,11 @@ endpoitns:
             }
   exists:
     file: exists.js
-    description: |
-      Wrapper around brreg.no. Searches among Norwegian companies of AS form by organiztion number or name. Returns list of results, empty list [] when nothing fits. Returns additional slug and email fields for companies that are already registered in BizBot and has Actual state.
+    description: >
+      Wrapper around brreg.no. Searches among Norwegian companies of AS form by
+      organiztion number or name. Returns list of results, empty list [] when
+      nothing fits. Returns additional slug and email fields for companies that
+      are already registered in BizBot and has Actual state.
     parameters:
       q:
         type: string
@@ -243,7 +246,7 @@ endpoitns:
     parameters:
       apiToken:
         type: string
-        description: User token, set here or in Authorization header
+        description: 'User token, set here or in Authorization header'
       orgNumber:
         type: string
         description: Organization number

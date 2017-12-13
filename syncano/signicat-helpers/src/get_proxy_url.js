@@ -4,7 +4,7 @@ import utils from './utils';
 function run(ctx, args, server) {
   const {method = 'nbid', profile = 'DEMO', lang = 'en', payload} = args;
   const {instanceName, spaceHost} = server.socket.instance;
-  let targetUrl = `${instanceName}.${spaceHost}/signicat/validate/`;
+  let targetUrl = `${instanceName}.${spaceHost}/signicat-helpers/validate/`;
   let proxyParams = {
     target: args.target,
     idAttribute: args.idAttribute || 'ResponseID'

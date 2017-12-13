@@ -77,7 +77,7 @@ function run(ctx, args, server) {
 }
 
 let middleware = {
-  parallel: ['validator/validate', 'signicat/validate-middleware']
+  parallel: ['validator/validate', 'signicat-helpers/validate-middleware']
 };
 
 export default ctx => {

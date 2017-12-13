@@ -1,6 +1,6 @@
 name: token-middleware
 description: Description of token-middleware
-version: 0.0.1
+version: 0.0.2
 classes:
   tm_tokens:
     - name: token
@@ -32,7 +32,10 @@ endpoints:
             }
   check-token-middleware:
     file: check_token.js
-    description: Check token validity, token can be passed as an argument or in header API-TOKEN. Parameter has priority so it can be used in case of header name conflicts.
+    description: >-
+      Check token validity, token can be passed as an argument or in header
+      API-TOKEN. Parameter has priority so it can be used in case of header name
+      conflicts.
     parameters:
       args:
         type: object

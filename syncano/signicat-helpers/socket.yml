@@ -1,6 +1,6 @@
-name: signicat
+name: signicat-helpers
 description: Description of signicat
-version: 0.0.1
+version: 0.0.2
 config:
   env:
     type: string
@@ -31,7 +31,9 @@ endpoints:
         required: true
       target:
         type: string
-        description: raw target url for signicat, no preprocessing except for encoding character according to RFC3986
+        description: >-
+          raw target url for signicat, no preprocessing except for encoding
+          character according to RFC3986
         required: true
       idAttribute:
         type: string
@@ -56,14 +58,20 @@ endpoints:
         required: true
       target:
         type: string
-        description: target endpoint in this instance, request will be validated using signicat/validate and forwarded after parsing to target endpoint. Target endpoint should NOT be accessible to public.
+        description: >-
+          target endpoint in this instance, request will be validated using
+          signicat/validate and forwarded after parsing to target endpoint.
+          Target endpoint should NOT be accessible to public.
         required: true
       idAttribute:
         type: string
         description: id of signed element in xml document (default ResponseID).
       payload:
         type: object
-        description: If provided, target endpoint will recieve this payload along with parsed assertion. Be careful, it will be encoded in GET request to signicat so keep it's size reasonable.
+        description: >-
+          If provided, target endpoint will recieve this payload along with
+          parsed assertion. Be careful, it will be encoded in GET request to
+          signicat so keep it's size reasonable.
   get-endpoint-url:
     file: get_endpoint_url.js
     description: Create signicat login url for endpoint
@@ -84,17 +92,25 @@ endpoints:
         required: true
       target:
         type: string
-        description: target endpoint in this instance, request will be validated using signicat/validate and forwarded after parsing to target endpoint. Target endpoint should NOT be accessible to public.
+        description: >-
+          target endpoint in this instance, request will be validated using
+          signicat/validate and forwarded after parsing to target endpoint.
+          Target endpoint should NOT be accessible to public.
         required: true
       idAttribute:
         type: string
         description: id of signed element in xml document (default ResponseID).
       payload:
         type: object
-        description: If provided, target endpoint will recieve this payload along with parsed assertion. Be careful, it will be encoded in GET request to signicat so keep it's size reasonable.
+        description: >-
+          If provided, target endpoint will recieve this payload along with
+          parsed assertion. Be careful, it will be encoded in GET request to
+          signicat so keep it's size reasonable.
   validate:
     file: validate.js
-    description: validate signicat response and proxy it to another endpoint with assertion as an additional parameter.
+    description: >-
+      validate signicat response and proxy it to another endpoint with assertion
+      as an additional parameter.
     allowed_methods:
       - POST
     parameters:

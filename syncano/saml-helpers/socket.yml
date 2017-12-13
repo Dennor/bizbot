@@ -1,7 +1,6 @@
 name: saml-helpers
 description: Description of saml-helpers
-version: 0.0.1
-
+version: 0.0.2
 endpoints:
   validate-response:
     file: validate_response.js
@@ -21,7 +20,7 @@ endpoints:
         type: string
         description: id of signed element in xml document (default AssertionID).
     resposne:
-      mimetype: 'application/json'
+      mimetype: application/json
       examples:
         - exit_code: 200
           example: |
@@ -58,7 +57,7 @@ endpoints:
         type: string
         description: id of signed element in xml document (default AssertionID).
     response:
-      mimetype: 'application/xml'
+      mimetype: application/xml
       examples:
         - exit_code: 200
           example: <xml ....>
@@ -75,7 +74,7 @@ endpoints:
         description: SAMLResponse string.
         required: true
     response:
-      mimetype: 'application/xml'
+      mimetype: application/xml
       examples:
         - exit_code: 200
           example: <xml ....>
