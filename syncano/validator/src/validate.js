@@ -83,7 +83,7 @@ class Validator {
         validationArgs[vlist] = args[vlist];
         value = args[vlist];
       }
-      validationLoop: for (let validator of this._validators[vlist]) {
+      for (let validator of this._validators[vlist]) {
         let vErr;
         vErr = validators[validator.rule](
           value,
@@ -200,9 +200,7 @@ function buildRulesFromParameters(meta, method) {
       rule.push('required');
     }
     if (param.constraints) {
-      for (let constraint of param.constraints) {
-        rule.push(...parseConstraintsObject(param.constraints, method));
-      }
+      rule.push(...parseConstraintsObject(param.constraints, method));
     }
   }
   return rules;
